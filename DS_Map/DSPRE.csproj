@@ -64,6 +64,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\HelixToolkit.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1001\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAPICodePack-Core.1.1.0.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
     </Reference>
@@ -112,7 +116,6 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AB.cs" />
     <Compile Include="EventFileImport.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -167,12 +170,6 @@
     <Compile Include="BuildingEditor.Designer.cs">
       <DependentUpon>BuildingEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="CameraView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CameraView.Designer.cs">
-      <DependentUpon>CameraView.cs</DependentUpon>
-    </Compile>
     <Compile Include="RomInfo.cs" />
     <Compile Include="ROMFiles\ScriptCommand.cs" />
     <Compile Include="ScintillaUtils\HotKeyManager.cs" />
@@ -204,7 +201,6 @@
     <Compile Include="ROMFiles\EncounterFile.cs" />
     <Compile Include="ROMFiles\TextArchive.cs" />
     <Compile Include="ROMFiles\MapHeader.cs" />
-    <Compile Include="RichTextBoxExt.cs" />
     <Compile Include="ROMFiles\ScriptFile.cs" />
     <Compile Include="ROMFiles\GameMatrix.cs" />
     <Compile Include="ROMFiles\EventFile.cs" />
@@ -293,9 +289,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="BuildingEditor.resx">
       <DependentUpon>BuildingEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CameraView.resx">
-      <DependentUpon>CameraView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ScintillaUtils\ScriptTooltip.resx">
       <DependentUpon>ScriptTooltip.cs</DependentUpon>

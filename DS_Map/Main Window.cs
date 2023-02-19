@@ -7747,6 +7747,118 @@ namespace DSPRE {
 
             textEditorDataGridView_CurrentCellChanged(textEditorDataGridView, null);
         }
+
+        private void ExportCurrentArchiveAsText_Click(object sender, EventArgs e)
+        {
+            disableHandlers = true;
+
+            //textEditorDataGridView.Rows.Clear();
+            if (currentTextArchive is null)
+            {
+                currentTextArchive = new TextArchive(selectTextFileComboBox.SelectedIndex);
+            }
+
+            /*foreach (string msg in currentTextArchive.messages)
+            {
+                textEditorDataGridView.Rows.Add(msg);
+            }
+
+            foreach(var msg2 in textEditorDataGridView.Rows)
+            {
+                msg
+            }*/
+            SaveDataGridViewToXLSFile(textEditorDataGridView);
+            disableHandlers = false;
+
+            //textEditorDataGridView_CurrentCellChanged(textEditorDataGridView, null);
+        }
+
+        private void ImportFromMSGFile_Click(object sender, EventArgs e)
+        {
+            disableHandlers = true;
+            LoadDataFromMSGFile();
+            disableHandlers = false;
+        }
+
+        private void LoadDataFromMSGFile()
+        {
+            textEditorDataGridView.Rows.Clear();
+            string inputFileString = "";
+            OpenFileDialog of = new OpenFileDialog();
+            if (of.ShowDialog() == DialogResult.OK)
+            {
+                // Check if the file exists before trying to open it 
+                if (File.Exists(of.FileName))
+                {
+                    inputFileString = of.FileName;
+                }
+            
+                string[] fileReadAllLines = File.ReadAllLines(inputFileString);
+                int num = 0;
+                foreach (string msg in fileReadAllLines)
+                {
+                    textEditorDataGridView.Rows.Add(msg);
+                    currentTextArchive.messages[num] = msg;
+                    num++;
+                }
+
+                if (hexRadiobutton.Checked)
+                {
+                    PrintTextEditorLinesHex();
+                }
+                else
+                {
+                    PrintTextEditorLinesDecimal();
+                }
+                textEditorDataGridView_CurrentCellChanged(textEditorDataGridView, null);
+                MessageBox.Show("File imported successfully!", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void SaveDataGridViewToXLSFile(DataGridView dataGridView1)
+        {
+            Microsoft.Office.Interop.Excel._Application app = new Microsoft.Office.Interop.Excel.Application();
+            Microsoft.Office.Interop.Excel._Workbook workbook = app.Workbooks.Add(Type.Missing);
+            Microsoft.Office.Interop.Excel._Worksheet worksheet = null;
+
+            string fileSuffix = "";
+
+            using (var fbd = new FolderBrowserDialog())
+            {
+
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+
+                    app.Visible = true;
+                    int num = 0;
+                    foreach (var item in selectTextFileComboBox.Items)
+                    {
+                        selectTextFileComboBox.SelectedIndex = num;
+                        fileSuffix = "000" + num;
+                        fileSuffix = fileSuffix.Substring(Math.Max(0, fileSuffix.Length - 4)) + ".xlsx";
+                        worksheet = workbook.ActiveSheet;
+                        worksheet.Cells.ClearContents();
+                            
+
+                        worksheet.Name = selectTextFileComboBox.SelectedIndex.ToString();
+
+                        for (int i = 0; i < dataGridView1.Rows.Count; i++)
+                        {
+                            for (int j = 0; j < dataGridView1.Columns.Count; j++)
+                            {
+                                worksheet.Cells[i + 1, j + 1] = dataGridView1.Rows[i].Cells[j].Value.ToString();
+                            }
+                        }
+
+                        workbook.SaveAs(Path.Combine(fbd.SelectedPath, fileSuffix));
+                        num++;
+
+                    }
+                    app.Quit(); 
+                }
+                
+            }
+        }
         private void PrintTextEditorLinesHex() {
             int final = Math.Min(textEditorDataGridView.Rows.Count, currentTextArchive.messages.Count);
 
@@ -10176,6 +10288,11 @@ namespace DSPRE {
         private void texturedBldRenderCheckBox_CheckedChanged(object sender, EventArgs e) {
             bldTexturesOn = (sender as CheckBox).Checked;
             RenderMap(ref mapRenderer, ref buildingsRenderer, ref currentMapFile, ang, dist, elev, perspective, mapOpenGlControl.Width, mapOpenGlControl.Height, mapTexturesOn, bldTexturesOn);
+        }
+
+        private void textEditorDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }
