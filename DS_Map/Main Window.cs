@@ -7853,10 +7853,9 @@ namespace DSPRE {
                 //
                 bool dontIncludeFirstSheet = checkIncludeFirstSheet.Checked;
 
-                if (dontIncludeFirstSheet) sheetBlacklist.Add("0");
+                
 
                 int columnNo = Convert.ToInt32(Math.Round(importRow.Value, 0));
-                int archiveNo = 0;
                 XLWorkbook workbook;
                 try
                 {
@@ -7867,17 +7866,19 @@ namespace DSPRE {
                     MessageBox.Show("An error occured while opening the file. You probably need to close excel files.", "Error");
                     return;
                 }
+
+                if (dontIncludeFirstSheet) sheetBlacklist.Add(workbook.Worksheet(1).Name);
+
+
                 foreach (var worksheet in workbook.Worksheets)
                 {
-                    if (sheetBlacklist.Contains(archiveNo.ToString()))
+                    if(sheetBlacklist.Contains(worksheet.Name))
                     {
-                        archiveNo++;
                         continue;
                     }
                     selectTextFileComboBox.SelectedIndex = Int32.Parse(worksheet.Name);
                     int rowsCount = dataGridView1.Rows.Count;
                     dataGridView1.Rows.Clear();
-                    archiveNo++;
 
                     for (int i = 0; i < rowsCount; i++)
                     {
