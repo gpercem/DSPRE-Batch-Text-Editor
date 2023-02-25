@@ -7824,27 +7824,56 @@ namespace DSPRE {
 
         private void LoadDataGridViewFromXLSXFile(DataGridView dataGridView1)
         {
+            
+
             OpenFileDialog of = new OpenFileDialog();
             of.Filter = "Excel File |*.xlsx| Excel File |*.xls";
             if (of.ShowDialog() == DialogResult.OK)
             {
-                // Clear rows to insert the new imported file
-                //textEditorDataGridView.Rows.Clear();
 
+                // EXCEPTION OF SHEETS SYSTEM
+                CheckBox[] classNames = { class1, class2, class3 };
+                CheckBox[] checkBoxes = { class1_1c, class1_2c, class1_3c, class2_1c, class2_2c, class2_3c, class3_1c, class3_2c, class3_3c };
+                TextBox[] textBoxes = { class1_1, class1_2, class1_3, class2_1, class2_2, class2_3, class3_1, class3_2, class3_3 };
+                List<string> sheetBlacklist = new List<string>();
+
+                for (int i = 0; i < classNames.Length; i++)
+                {
+                    if (classNames[i].Checked)
+                    {
+                        for (int j = 0; j < checkBoxes.Length / classNames.Length; j++)
+                        {
+                            if (checkBoxes[j + (i * classNames.Length)].Checked)
+                            {
+                                sheetBlacklist.Add(textBoxes[j + (i * classNames.Length)].Text);
+                            }
+                        }
+                    }
+                }
+                //
                 bool dontIncludeFirstSheet = checkIncludeFirstSheet.Checked;
+
+                if (dontIncludeFirstSheet) sheetBlacklist.Add("0");
+
+                int columnNo = Convert.ToInt32(Math.Round(importRow.Value, 0));
                 int archiveNo = 0;
                 XLWorkbook workbook;
                 try
                 {
                     workbook = new XLWorkbook(of.FileName);
-                }catch
+                }
+                catch
                 {
                     MessageBox.Show("An error occured while opening the file. You probably need to close excel files.", "Error");
                     return;
                 }
                 foreach (var worksheet in workbook.Worksheets)
                 {
-                    if (archiveNo == 0 && dontIncludeFirstSheet) return;
+                    if (sheetBlacklist.Contains(archiveNo.ToString()))
+                    {
+                        archiveNo++;
+                        continue;
+                    }
                     selectTextFileComboBox.SelectedIndex = Int32.Parse(worksheet.Name);
                     int rowsCount = dataGridView1.Rows.Count;
                     dataGridView1.Rows.Clear();
@@ -7852,14 +7881,28 @@ namespace DSPRE {
 
                     for (int i = 0; i < rowsCount; i++)
                     {
-                        dataGridView1.Rows.Add(worksheet.Cell(i+1, 1).Value);
-                        currentTextArchive.messages[i] = worksheet.Cell(i + 1, 1).Value.ToString();
+                        var currentCell = worksheet.Cell(i + 1, columnNo);
+                        //if swap is enabled, do every swap on lists
+                        if (enableSwap.Checked == true)
+                        {
+                            int l = 0;
+                            foreach (var line in characterFromList.Lines)
+                            {
+                                currentCell.Value = currentCell.Value.ToString().Replace(char.Parse(line), char.Parse(characterToList.Lines[l]));
+                                l++;
+                            }
+                        }
+                        if (!currentCell.IsEmpty())
+                        {
+                            dataGridView1.Rows.Add(currentCell.Value);
+                            currentTextArchive.messages[i] = currentCell.Value.ToString();
+                        }
                     }
                     currentTextArchive.SaveToFileDefaultDir(selectTextFileComboBox.SelectedIndex, false);
                 }
 
-
             }
+            
         }
 
         private void SaveDataGridViewToXLSXFile(DataGridView dataGridView1)
@@ -10360,6 +10403,16 @@ namespace DSPRE {
         }
 
         private void label37_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MainProgram_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void exceptionControl1_Load(object sender, EventArgs e)
         {
 
         }
