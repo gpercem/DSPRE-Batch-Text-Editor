@@ -7873,7 +7873,7 @@ namespace DSPRE {
                 foreach (var worksheet in workbook.Worksheets)
                 {
                     int integerName = Int32.Parse(worksheet.Name);
-                    if (sheetBlacklist.Contains(worksheet.Name) || (integerName < Int32.Parse(importMin.Text) && integerName > Int32.Parse(importMin.Text)))
+                    if (sheetBlacklist.Contains(worksheet.Name) || (integerName < Int32.Parse(importMin.Text) || integerName > Int32.Parse(importMax.Text)))
                     {
                         continue;
                     }
